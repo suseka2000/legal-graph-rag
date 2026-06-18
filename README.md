@@ -1,8 +1,8 @@
-Legal RAG Agent
+## Legal RAG Agent
 
 RAG-агент для поиска и анализа нормативных документов с использованием гибридного поиска (BM25 + Dense Retrieval) и локальной LLM через Ollama.
 
-Возможности
+## Возможности
 
 * Загрузка PDF и DOCX документов
 * Автоматическое построение структуры документа:
@@ -24,30 +24,31 @@ RAG-агент для поиска и анализа нормативных до
 * Веб-интерфейс на FastAPI
 * Поддержка локальных моделей через Ollama
 
-⸻
+---
 
-Архитектура
+## Архитектура
 
-Документы
-    ↓
-Парсер
-    ↓
-Chunk Graph
-    ↓
-BM25 + Dense Index
-    ↓
-Hybrid Retriever
-    ↓
-Tools
-    ↓
-ReAct Agent
-    ↓
+Документы  
+&nbsp;&nbsp;&nbsp;&nbsp;↓  
+Парсер  
+&nbsp;&nbsp;&nbsp;&nbsp;↓  
+Chunk Graph  
+&nbsp;&nbsp;&nbsp;&nbsp;↓  
+BM25 + Dense Index  
+&nbsp;&nbsp;&nbsp;&nbsp;↓  
+Hybrid Retriever  
+&nbsp;&nbsp;&nbsp;&nbsp;↓  
+Tools  
+&nbsp;&nbsp;&nbsp;&nbsp;↓  
+ReAct Agent  
+&nbsp;&nbsp;&nbsp;&nbsp;↓  
 LLM
 
-⸻
+---
 
-Структура проекта
+## Структура проекта
 
+```text
 project/
 ├── app.py
 ├── agent.py
@@ -59,67 +60,83 @@ project/
 │   └── index.html
 ├── requirements.txt
 └── README.md
+```
+---
 
-⸻
-
-Установка
+## Установка
 
 1. Клонирование репозитория
-
+   
+```python
 git clone <repo_url>
 cd <repo_name>
+```
 
 2. Создание виртуального окружения
 
 macOS / Linux
 
+```bash
 python3 -m venv venv
 source venv/bin/activate
+```
 
 Windows
 
+```bash
 python -m venv venv
 venv\Scripts\activate
+```
 
 3. Установка зависимостей
-
+```bash
 pip install -r requirements.txt
+```
+---
 
-⸻
-
-Установка модели
+## Установка модели
 
 Установить Ollama:
 
+```text
 https://ollama.com
+```
 
-Скачать модель:
+Скачать модель, например:
 
+```
 ollama pull qwen2.5:7b
+```
 
 Запустить Ollama:
 
+```bash
 ollama serve
+```
+---
 
-⸻
-
-Запуск приложения
+## Запуск приложения
 
 Запуск веб-сервера:
 
+```bash
 uvicorn app:app --reload
+```
 
 После запуска открыть:
 
+```text
 http://localhost:8000
+```
 
 Swagger-документация:
 
+```text
 http://localhost:8000/docs
+```
+---
 
-⸻
-
-Использование
+## Использование
 
 Шаг 1
 
@@ -129,7 +146,9 @@ http://localhost:8000/docs
 
 Нажать кнопку:
 
+```text
 Инициализировать базу
+```
 
 Будут построены:
 
@@ -139,71 +158,61 @@ http://localhost:8000/docs
 
 Шаг 3
 
-Задать вопрос на естественном языке.
+Задать вопрос.
 
 Пример:
 
+```text
 Каков срок подачи декларации по НДС?
+```
+---
 
-⸻
-
-Конфигурация агента
+## Конфигурация агента
 
 Настройки находятся непосредственно в файлах проекта.
 
-Выбор модели
+### Выбор модели
 
-В app.py:
+В clien.py можно изменить локальную модель или выбрать нелокальную модель
 
-agent = Agent(
-    client=client,
-    kb=kb,
-    tools=TOOLS,
-    tool_schemas=tool_schemas,
-    model="qwen2.5:7b",
-    temperature=0.0,
-    max_steps=10
-)
+```python
+if USE_OLLAMA:
 
-Изменить модель:
+    client = OpenAI(
+        base_url="http://localhost:11434/v1",
+        api_key="ollama"
+    )
 
-model="llama3:8b"
+else:
 
-или
+    client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=os.getenv(
+            "OPENROUTER_API_KEY"
+        )
+    )
+```
+### Настройка агента
+В agent.py можно задать свой SYSTEM_PROMPT:
 
-model="gemma3:4b"
+```python
+SYSTEM_PROMPT = """
+Ты агент по нормативным документам.
 
-⸻
+Для ответа используй инструменты.
 
-Температура
+Алгоритм:
+1. Сначала вызови retrieve().
+...
+"""
+```
 
-temperature=0.0
-
-Рекомендуемые значения:
-
-Значение	Назначение
-0.0	Максимальная точность
-0.2	Небольшая вариативность
-0.7	Более творческие ответы
-
-⸻
-
-Максимальное число шагов агента
-
-max_steps=10
-
-Обычно достаточно:
-
-5-10
-
-⸻
-
-Поддерживаемые форматы
+## Поддерживаемые форматы
 
 * PDF
 * DOCX
 
-⸻
+---
 
 Скриншоты
 
@@ -235,7 +244,7 @@ max_steps=10
 * Поддержка OpenRouter
 * Мультимодальный поиск
 
-⸻
+---
 
 Лицензия
 
