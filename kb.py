@@ -1,5 +1,5 @@
 from parser import build_chunks_by_id, build_children_by_id
-from retrieval import normalize, build_dense_index
+from retrieval import normalize, build_dense_index, hybrid_search
 from loaders import load_document, parse_document
 
 from pathlib import Path
@@ -114,3 +114,18 @@ class KnowledgeBase:
                 )
 
         return all_chunks
+    
+    def retrieve(
+    self,
+    query,
+    top_k=5
+):
+
+        return hybrid_search(
+            query=query,
+            bm25=self.bm25,
+            chunks=self.chunks,
+            dense_index=self.dense_index,
+            chunks_by_id=self.chunks_by_id,
+            top_k=top_k
+        )

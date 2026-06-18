@@ -2,6 +2,10 @@ from pathlib import Path
 import fitz  # pymupdf
 from docx import Document
 import os
+import uuid
+
+from models import Chunk
+from parser import extract_structured_headers, _update_stack
 
 def load_documents_from_dir(directory: str):
     paths = []
@@ -87,8 +91,6 @@ def parse_directory(directory: str):
             )
 
     return all_chunks
-
-import uuid
 
 def parse_document(doc_name: str, text: str):
 

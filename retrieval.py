@@ -1,6 +1,8 @@
 import re
 import pymorphy3
 from rank_bm25 import BM25Okapi
+from sentence_transformers import SentenceTransformer
+import numpy as np
 
 morph = pymorphy3.MorphAnalyzer()
 
@@ -38,9 +40,6 @@ def sparse_search(query, bm25, chunks, k):
         })
 
     return results
-
-from sentence_transformers import SentenceTransformer
-import numpy as np
 
 model = SentenceTransformer("intfloat/multilingual-e5-small")
 
@@ -99,6 +98,7 @@ def hybrid_search(
     bm25,
     chunks,
     dense_index,
+    chunks_by_id,
     top_k
 ):
 

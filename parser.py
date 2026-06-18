@@ -1,4 +1,5 @@
 import re
+from collections import defaultdict
 
 PATTERNS = {
     "chapter": re.compile(r"^(Глава\s+\d+\.?.*)$", re.MULTILINE),
@@ -69,8 +70,6 @@ def build_chunks_by_id(chunks):
         chunk.id: chunk
         for chunk in chunks
     }
-
-from collections import defaultdict
 
 def build_children_by_id(chunks):
 
