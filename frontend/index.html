@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Legal RAG</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f6f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 600px;
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            color: #5a4fcf;
+        }
+
+        input, button, textarea {
+            width: 100%;
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        button {
+            background: #a78bfa;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #8b5cf6;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .answer {
+            margin-top: 20px;
+            padding: 12px;
+            background: #f3f0ff;
+            border-radius: 10px;
+            min-height: 60px;
+            white-space: pre-wrap;
+        }
+
+        /* ===== LOADING OVERLAY ===== */
+        .loading::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(246, 244, 249, 0.75);
+            backdrop-filter: blur(3px);
+            z-index: 999;
+        }
+
+        .loading::after {
+            content: "";
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 42px;
+            height: 42px;
+            margin-left: -21px;
+            margin-top: -21px;
+            border: 3px solid #ddd;
+            border-top: 3px solid #5a4fcf;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 1000;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Legal RAG Agent</h1>
+
+    <textarea id="question" placeholder="Введите вопрос..."></textarea>
+
+    <button id="askBtn" onclick="ask()">Отправить запрос</button>
+
+    <input type="file" id="fileInput" multiple />
+    <button id="uploadBtn" onclick="upload()">Загрузить файлы</button>
+
+    <button id="initBtn" onclick="initKB()">Инициализировать базу</button>
+
+    <div class="answer" id="answer"></div>
+
+</div>
+
+<script>
+
+function setLoading(isLoading) {
+
+    document.body.classList.toggle("loading", isLoading);
+
+    document.getElementById("askBtn").disabled = isLoading;
+    document.getElementById("uploadBtn").disabled = isLoading;
+    document.getElementById("initBtn").disabled = isLoading;
+}
+
+/* ================= QUERY ================= */
+
+async function ask() {
+
+    const q = document.getElementById("question").value;
+    const answerBox = document.getElementById("answer");
+
+    setLoading(true);
+    answerBox.innerText = "Thinking...";
+
+    try {
+
+        const res = await fetch("/query", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ question: q })
+        });
+
+        const data = await res.json();
+
+        answerBox.innerText =
+            data.answer ?? JSON.stringify(data);
+
+    } catch (err) {
+
+        answerBox.innerText = "Error: " + err;
+
+    } finally {
+        setLoading(false);
+    }
+}
+
+/* ================= UPLOAD ================= */
+
+async function upload() {
+
+    const files = document.getElementById("fileInput").files;
+
+    setLoading(true);
+
+    try {
+
+        for (let f of files) {
+
+            const formData = new FormData();
+            formData.append("file", f);
+
+            await fetch("/upload-file", {
+                method: "POST",
+                body: formData
+            });
+        }
+
+        alert("Files uploaded");
+
+    } catch (err) {
+
+        alert("Upload error: " + err);
+
+    } finally {
+        setLoading(false);
+    }
+}
+
+/* ================= INIT KB ================= */
+
+async function initKB() {
+
+    setLoading(true);
+
+    try {
+
+        const res = await fetch("/build-kb", {
+            method: "POST"
+        });
+
+        const data = await res.json();
+
+        alert(`KB initialized: ${data.chunks} chunks`);
+
+    } catch (err) {
+
+        alert("KB init error: " + err);
+
+    } finally {
+        setLoading(false);
+    }
+}
+
+</script>
+
+</body>
+</html>
