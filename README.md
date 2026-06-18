@@ -213,15 +213,16 @@ SYSTEM_PROMPT = """
 * DOCX
 
 ---
+## Пример работы
 
 <table>
   <tr>
     <td align="center">
-      <img src="./misc/images/1.png" width="300"><br>
+      <img src="./misc/images/1img.png" width="300"><br>
       <b>Рис. 1 — Ответ агента</b>
     </td>
     <td align="center">
-      <img src="./misc/images/2.png" width="300"><br>
+      <img src="./misc/images/2img.png" width="300"><br>
       <b>Рис. 2 — Загрузка ответа и инициалиция базы знаний</b>
     </td>
   </tr>
