@@ -223,7 +223,7 @@ SYSTEM_PROMPT = """
     </td>
     <td align="center">
       <img src="./misc/images/2img.png" width="300"><br>
-      <b>Рис. 2 — Загрузка ответа и инициалиция базы знаний</b>
+      <b>Рис. 2 — Загрузка ответа</b>
     </td>
   </tr>
 </table>
