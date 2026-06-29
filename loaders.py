@@ -107,8 +107,7 @@ def parse_document(doc_name: str, text: str):
         ]
 
     chunks = []
-    stack = []  # хранит текущую иерархию
-
+    stack = []
     for i, h in enumerate(headers):
 
         start = h["start"]
@@ -118,7 +117,6 @@ def parse_document(doc_name: str, text: str):
 
         node_id = str(uuid.uuid4())
 
-        # определяем parent
         parent_id = stack[-1]["id"] if stack else None
 
         chunk = Chunk(
@@ -132,7 +130,6 @@ def parse_document(doc_name: str, text: str):
 
         chunks.append(chunk)
 
-        # обновляем стек по уровню
         _update_stack(stack, h, node_id, h["level"])
 
     return chunks

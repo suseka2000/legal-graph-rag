@@ -4,6 +4,8 @@ from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
+from config import EMBEDDING_MODEL
+
 morph = pymorphy3.MorphAnalyzer()
 
 def normalize(text):
@@ -41,7 +43,7 @@ def sparse_search(query, bm25, chunks, k):
 
     return results
 
-model = SentenceTransformer("intfloat/multilingual-e5-small")
+model = SentenceTransformer(EMBEDDING_MODEL)
 
 def embed_query(text: str):
     return model.encode(

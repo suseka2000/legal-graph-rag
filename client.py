@@ -2,6 +2,8 @@ import os
 
 from openai import OpenAI
 
+from config import OLLAMA_BASE_URL, OLLAMA_API_KEY
+
 
 USE_OLLAMA = True
 
@@ -9,8 +11,8 @@ USE_OLLAMA = True
 if USE_OLLAMA:
 
     client = OpenAI(
-        base_url="http://localhost:11434/v1",
-        api_key="ollama"
+        base_url=OLLAMA_BASE_URL,
+        api_key=OLLAMA_API_KEY
     )
 
 else:

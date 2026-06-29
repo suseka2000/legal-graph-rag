@@ -12,6 +12,8 @@ from tools import TOOLS, tool_schemas
 from agent import SYSTEM_PROMPT
 from client import client
 
+from config import UPLOAD_DIR
+
 
 app = FastAPI()
 
@@ -23,9 +25,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
-
-UPLOAD_DIR = "uploads"
 
 os.makedirs(
     UPLOAD_DIR,
@@ -75,7 +74,7 @@ def build_kb():
         tool_schemas=tool_schemas,
         SYSTEM_PROMPT = SYSTEM_PROMPT,
         model="qwen2.5:7b",
-        temperature=0.0,
+        temperature=0.5,
         max_steps=10
     )
 

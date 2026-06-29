@@ -5,6 +5,8 @@ from tools import TOOLS, tool_schemas
 from agent import SYSTEM_PROMPT
 from client import client
 
+from config import *
+
 
 def main():
 
@@ -24,9 +26,9 @@ def main():
         tools=TOOLS,
         tool_schemas=tool_schemas,
         SYSTEM_PROMPT=SYSTEM_PROMPT,
-        model="qwen2.5:7b",
-        temperature=0.0,
-        max_steps=10
+        model=MODEL,
+        temperature=TEMPERATURE,
+        max_steps=MAX_STEPS
     )
 
     print()

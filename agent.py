@@ -1,5 +1,7 @@
 import json
 
+from config import MODEL
+
 class Agent:
 
     def __init__(
@@ -9,7 +11,7 @@ class Agent:
         tools,
         tool_schemas,
         SYSTEM_PROMPT,
-        model="qwen2.5:7b",
+        model=MODEL,
         temperature=0.0,
         max_steps=10
     ):
