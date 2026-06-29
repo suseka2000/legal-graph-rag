@@ -65,134 +65,102 @@ project/
 
 ## Установка
 
-1. Клонирование репозитория
-   
-```python
-git clone <repo_url>
-cd <repo_name>
+1. Клонировать репозиторий
+```bash 
+git clone https://github.com/suseka2000/legal-graph-rag
+cd ./legal-graph-rag
 ```
 
-2. Создание виртуального окружения
-
-macOS / Linux
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
+2. Собрать и запустить контейнеры
+```bash 
+docker compose up --build
 ```
 
-Windows
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-```
-
-3. Установка зависимостей
-```bash
-pip install -r requirements.txt
-```
----
-
-## Установка модели
-
-Установить Ollama:
-
-```text
-https://ollama.com
-```
-
-Скачать модель, например:
-
-```
-ollama pull qwen2.5:7b
-```
-
-Запустить Ollama:
-
-```bash
-ollama serve
+3. После первого запуска в отдельном терминале загрузить модель в контейнер Ollama:
+```bash 
+docker exec -it ollama ollama pull qwen2.5:7b
 ```
 ---
 
 ## Запуск приложения
 
-Запуск веб-сервера:
+После запуска Docker Compose будут автоматически подняты:
 
-```bash
-uvicorn app:app --reload
+```text
+* FastAPI Backend
+* Ollama Server
 ```
-
-После запуска открыть:
+Веб-интерфейс API:
 
 ```text
 http://localhost:8000
 ```
 
-Swagger-документация:
+Если используется frontend из папки frontend, откройте файл index.html в браузере.
 
-```text
-http://localhost:8000/docs
-```
 ---
 
 ## Использование
 
-Шаг 1
 
-Загрузить PDF или DOCX документы через веб-интерфейс.
+* Загрузите один или несколько PDF/DOCX документов.
+* Нажмите кнопку «Инициализировать базу».
 
-Шаг 2
-
-Нажать кнопку:
+Будут автоматически построены:
 
 ```text
-Инициализировать базу
-```
-
-Будут построены:
-
 * Chunk Graph
 * BM25 Index
 * Dense Index
+```
 
-Шаг 3
+* Введите вопрос на естественном языке.
 
-Задать вопрос.
-
-Пример:
+Например:
 
 ```text
 Каков срок подачи декларации по НДС?
 ```
+
+Агент самостоятельно выполнит поиск релевантных фрагментов документации и сформирует ответ с использованием локальной языковой модели.
+
 ---
 
-## Конфигурация агента
+## Конфигурация
 
-Настройки находятся непосредственно в файлах проекта.
+Основные параметры приложения находятся в файле .env.
 
-### Выбор модели
+Пример:
+```python
+MODEL=qwen2.5:7b
+TEMPERATURE=0.0
+MAX_STEPS=10
+EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
+OLLAMA_BASE_URL=http://ollama:11434/v1
+OLLAMA_API_KEY=ollama
+```
 
-В clien.py можно изменить локальную модель или выбрать нелокальную модель
+После изменения конфигурации необходимо перезапустить контейнеры:
+
+```bash
+docker compose up --build
+```
+---
+
+## Выбор модели
+
+Для использования другой локальной модели достаточно загрузить её в Ollama:
+
+Затем измените параметр MODEL в файле .env:
 
 ```python
-if USE_OLLAMA:
-
-    client = OpenAI(
-        base_url="http://localhost:11434/v1",
-        api_key="ollama"
-    )
-
-else:
-
-    client = OpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=os.getenv(
-            "OPENROUTER_API_KEY"
-        )
-    )
+MODEL=llama3.2
 ```
-### Настройка агента
+После перезапуска контейнеров агент начнет использовать выбранную модель.
+
+Для использования облачных моделей (OpenRouter/OpenAI) достаточно изменить параметры клиента в client.py и указать соответствующий API-ключ в .env.
+
+## Настройка агента
 В agent.py можно задать свой SYSTEM_PROMPT:
 
 ```python
@@ -206,11 +174,6 @@ SYSTEM_PROMPT = """
 ...
 """
 ```
-
-## Поддерживаемые форматы
-
-* PDF
-* DOCX
 
 ---
 ## Пример работы
